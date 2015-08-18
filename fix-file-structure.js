@@ -20,7 +20,9 @@ glob(
                 newDir = path.join(path.dirname(dirName), newBaseName),
                 newFile = path.join(newDir, newBaseName + '.scss'),
                 jsFile = path.join(dirName, baseName + '.js'),
-                newJsFile = path.join(newDir, newBaseName + '.js');
+                newJsFile = path.join(newDir, newBaseName + '.js'),
+                readmeFile = path.join(dirName, 'README.md'),
+                newReadmeFile = path.join(newDir, newBaseName + '.en.md');
 
             if(fileBaseName === baseName) {
                 writeNewScss(file, newBaseName, newDir, newFile);
@@ -50,12 +52,16 @@ glob(
                 }
             }
 
-            if(fs.existsSync(jsFile)) {
-                console.log('? ', jsFile);
-                !fs.existsSync(newJsFile) &&
-                    fs.symlinkSync(path.relative(newDir, jsFile), newJsFile);
-                console.log('! ', newJsFile);
-            }
+            [
+                { oldName: jsFile, name: newJsFile },
+                { oldName: readmeFile, name: newReadmeFile }
+            ].forEach(function(file) {
+                if(!fs.existsSync(file.oldName)) return;
+                console.log('? ', file.oldName);
+                !fs.existsSync(file.name) &&
+                    fs.symlinkSync(path.relative(newDir, file.oldName), file.name);
+                console.log('! ', file.name);
+            });
         });
     });
 
